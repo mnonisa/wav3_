@@ -1,5 +1,6 @@
 - name: Install Docker and run daemon
   hosts: kafka
+  become: True
   tasks:
     - name: Install Docker
       package:
@@ -11,3 +12,16 @@
         name: docker
         state: started
         enabled: yes
+
+    - name: Pull Docker image
+      community.docker.docker_image:
+        name: apache/kafka:3.9.0
+        source: pull
+
+    - name: Run Docker container
+      community.docker.docker_container:
+        name: kafka_broker
+        image: apache/kafka
+        state: started
+        ports:
+          - "9092:9092"
