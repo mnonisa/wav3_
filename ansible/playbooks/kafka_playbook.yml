@@ -1,0 +1,13 @@
+- name: Install Docker and run daemon
+  hosts: kafka
+  tasks:
+    - name: Install Docker
+      package:
+        name: docker-ce
+        state: present
+
+    - name: Start Docker daemon
+      service:
+        name: docker
+        state: started
+        enabled: yes
