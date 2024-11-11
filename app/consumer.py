@@ -4,7 +4,7 @@ from utils import load_config
 
 
 def main():
-    config_ = load_config(file_name='producer_config.toml')
+    config_ = load_config(file_name='consumer_config.toml')
     conf = {'bootstrap.servers': f'{config_["kafka"]["bootstrap.servers"]}',
             'group.id': 'unique_id',
             'auto.offset.reset': 'earliest',
