@@ -1,0 +1,3 @@
+*.swp
+vars.yml
+ansible/inventory_files/
