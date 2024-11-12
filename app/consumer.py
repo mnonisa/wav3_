@@ -20,7 +20,7 @@ def main():
         elif msg.error():
             print(f'+++++ Error: {msg.error()}')
         else:
-            print('------------------------------')
+            print('-------------------------')
             print(pd.to_datetime(int(msg.timestamp()[1]), utc=True, unit='ms'))
             try:
                 print(float(msg.value().decode("utf-8")))
