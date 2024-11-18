@@ -1,3 +1,4 @@
 ---
 - import_playbook: docker_dl_and_start.yml
-- import_playbook: kafka_playbook.yml 
+- import_playbook: kafka.yml
+- import_playbook: redis.yml 
