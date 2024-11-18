@@ -2,9 +2,6 @@
   hosts: kafka, redis
   become: True
   tasks:
-    - name: Include app variables
-      include_vars: vars.yml
-
     - name: Add Docker GPG apt Key
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
