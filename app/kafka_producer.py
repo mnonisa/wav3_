@@ -5,8 +5,8 @@ from utils import load_config
 
 
 def main():
-    config_ = load_config(file_name='producer_config.toml')
-    producer = Producer(config_['kafka-producer'])
+    config_ = load_config(file_name='kafka_producer_config.toml')
+    producer = Producer(config_['kafka_broker'])
 
     while True:
         print(f'topics: {producer.list_topics().topics}')
