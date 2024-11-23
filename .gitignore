@@ -4,3 +4,4 @@ ansible/inventory_files/
 configs/
 .idea/
 Docs/
+__pycache__/
