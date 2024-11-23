@@ -1,2 +1,8 @@
 pandas~=2.2.0
 redis~=5.2.0
+toml~=0.10.2
+SQLAlchemy~=2.0.36
+confluent-kafka~=2.6.0
+clickhouse-driver~=0.2.9
+clickhouse-sqlalchemy~=0.3.2
+toml~=0.10.2
