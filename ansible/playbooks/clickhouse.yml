@@ -1,0 +1,28 @@
+- name: Install & Run Clickhouse
+  hosts: clickhouse
+  become: True
+  tasks:
+    - name: Add CH apt Key
+      apt_key:
+        url: https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key
+        state: present
+
+    - name: Add CH Repository
+      apt_repository:
+        repo: deb https://packages.clickhouse.com/deb stable main
+        state: present
+    
+    - name: Install Clickhouse server
+      package:
+          name: clickhouse-server
+          state: present
+
+    - name: Install Clickhouse client
+      package:
+          name: clickhouse-client
+          state: present
+
+    - name: Start Clickhouse service
+      ansible.builtin.service:
+          name: clickhouse-server
+          state: started 
