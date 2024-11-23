@@ -1,4 +1,4 @@
-## <ins>WAV3_</ins>
+## <ins>wav3_</ins>
 
 The goal of this project is to create a deverse data platform whose deployment is fully automated
 
