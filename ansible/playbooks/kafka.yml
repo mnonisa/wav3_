@@ -2,6 +2,9 @@
   hosts: kafka
   become: True
   tasks:
+    - name: Include app variables
+      include_vars: vars.yml
+
     - name: Pull Docker image
       community.docker.docker_image:
         name: apache/kafka:3.9.0
