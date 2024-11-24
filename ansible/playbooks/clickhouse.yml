@@ -9,7 +9,7 @@
 
     - name: Add CH Repository
       apt_repository:
-        repo: deb https://packages.clickhouse.com/deb stable main
+        repo: deb https://packages.clickhouse.com/deb lts main
         state: present
     
     - name: Install Clickhouse server

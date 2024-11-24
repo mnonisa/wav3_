@@ -32,20 +32,20 @@ def main():
     '''
     print(pd.read_sql(query, ch_engine))
 
-    msg = True
-    while True:
-        msg = consumer.poll(timeout=1.0)
-        if msg is None:
-            pass
-        elif msg.error():
-            print(f'+++++ Error: {msg.error()}')
-        else:
-            print('-------------------------')
-            print(pd.to_datetime(int(msg.timestamp()[1]), utc=True, unit='ms'))
-            try:
-                print(float(msg.value().decode("utf-8")))
-            except ValueError:
-                print('ValueError in parser')
+    # msg = True
+    # while True:
+    #     msg = consumer.poll(timeout=1.0)
+    #     if msg is None:
+    #         pass
+    #     elif msg.error():
+    #         print(f'+++++ Error: {msg.error()}')
+    #     else:
+    #         print('-------------------------')
+    #         print(pd.to_datetime(int(msg.timestamp()[1]), utc=True, unit='ms'))
+    #         try:
+    #             print(float(msg.value().decode("utf-8")))
+    #         except ValueError:
+    #             print('ValueError in parser')
 
     # print('out of while')
 
