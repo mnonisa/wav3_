@@ -11,7 +11,11 @@
       apt_repository:
         repo: deb https://packages.clickhouse.com/deb lts main
         state: present
-    
+
+    - name: Update and upgrade apt packages
+      apt:
+        upgrade: yes 
+
     - name: Install Clickhouse server
       package:
           name: clickhouse-server
