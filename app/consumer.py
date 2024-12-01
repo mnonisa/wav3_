@@ -19,6 +19,7 @@ def main():
     df_data = pd.DataFrame()
     timeout = config_["kafka"]["initial_poll_timeout"]
     calc_ = 0
+    table_creation_confirmed = False
     while True:
         msg = kafka_consumer.poll(timeout=timeout)
         if msg is None:
@@ -37,14 +38,18 @@ def main():
 
                 # print(calc_)
 
+                # TODO add timestamp to data
                 curr_list = [[kafka_val, inter_val, calc_]]
-                curr_df = pd.DataFrame(curr_list)
+                curr_df = pd.DataFrame(curr_list, columns=['kafka_val', 'inter_val', 'calculation'])
                 df_data = pd.concat([df_data, curr_df])
                 if df_data.shape[0] >= config_['general']['load_batch_size']:
-                    # rows_inserted = ch_client.insert_dataframe(
-                    #     f'insert into {"default"}.{"test_table"} values', df_data
-                    # )
-                    rows_inserted = df_data.shape[0]
+                    if not table_creation_confirmed:
+                        table_creation_confirmed = confirm_or_create_table(config_, ch_engine, ch_client)
+                    rows_inserted = ch_client.insert_dataframe(
+                        f'insert into {config_["clickhouse"]["schema"]}.{config_["clickhouse"]["table"]} values',
+                        df_data,
+                        settings={'use_numpy': True}
+                    )
                     print(f'+++ Inserted {rows_inserted} rows')
                     df_data = pd.DataFrame()
             except ValueError:
@@ -91,6 +96,27 @@ def get_ch_client(config_):
                     user=config_["clickhouse"]["user"])
 
     return client
+
+
+def confirm_or_create_table(config_, ch_engine, ch_client):
+    tables_query = '''
+        show tables
+    '''
+    results = pd.read_sql(tables_query, ch_engine)
+    if config_["clickhouse"]["table"] in results.name.values:
+        return True
+    else:
+        # TODO clean this up to add timestamp and use as key
+        create_table_query = f'''
+            create table {config_["clickhouse"]["schema"]}.{config_["clickhouse"]["table"]} (
+            kafka_val float,
+            inter_val float,
+            calculation float
+            )
+            order by kafka_val
+        '''
+        ch_client.execute(create_table_query)
+        return True
 
 
 if __name__ == '__main__':
