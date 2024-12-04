@@ -5,7 +5,7 @@ import os
 def load_config(file_name):
     # assumes config is in project configs dir
     curr_path = os.path.dirname(os.path.realpath(__file__))
-    producer_config_path = f'{curr_path}/../configs/{file_name}'
+    producer_config_path = f'{curr_path}/../configs/app_configs/{file_name}'
     config_ = toml.load(producer_config_path)
 
     return config_

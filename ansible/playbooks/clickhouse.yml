@@ -26,6 +26,12 @@
           name: clickhouse-client
           state: present
 
+
+    - name: Copy modified config file
+      ansible.builtin.copy:
+          src: /Users/main_account/Documents/Projects/wav3_/configs/server_configs/ch_config.xml
+          dest: /etc/clickhouse-server/config.xml
+
     - name: Start Clickhouse service
       ansible.builtin.service:
           name: clickhouse-server
