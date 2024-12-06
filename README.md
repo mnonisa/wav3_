@@ -6,7 +6,7 @@ The goal of this project is to create a deverse data platform whose deployment i
 
 ### <ins>DEPLOYMENT:</ins>
 
-The setup of the below VMs are completely automated using the Ansible playbooks
+The setup of the below VMs is completely automated using the Ansible playbooks
 
 Virtual Machines:
 
