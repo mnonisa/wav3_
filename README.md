@@ -6,7 +6,7 @@ The goal of this project is to create a deverse data platform whose deployment i
 
 ### <ins>DEPLOYMENT:</ins>
 
-VM deployment automated using Ansible
+The setup of the below VMs are completely automated using the Ansible playbooks
 
 Virtual Machines:
 
@@ -15,7 +15,7 @@ Virtual Machines:
 3.  (Multiple - 3?) Clickhouse cluster running directly on vm
 4.  (Multiple - 3?) Clickhouse keeper cluster running directly on vm
 5.  Data producers - see "Producers" below
-6.  Data  consumers - see "Consumers" below
+6.  Data consumers - see "Consumers" below
 7.  Web server to visualize data (and allow for producer data manipulation?)
 
 &nbsp;

@@ -1,8 +1,5 @@
-import pyspark
 # from app.utils import load_config
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import explode
-from pyspark.sql.functions import split
 
 
 def main():
