@@ -1,11 +1,12 @@
 from confluent_kafka import Consumer
 import pandas as pd
-from utils import load_config
+from app.utils import load_config
 import redis
 from sqlalchemy import create_engine
 import random
 from clickhouse_driver import Client
 import traceback
+from datetime import datetime
 
 
 def main():
@@ -17,30 +18,32 @@ def main():
     ch_client = get_ch_client(config_)
 
     df_data = pd.DataFrame()
-    timeout = config_["kafka"]["initial_poll_timeout"]
+    timeout = config_["kafka"]["poll_timeout"]
     calc_ = 0
     table_creation_confirmed = False
     while True:
-        msg = kafka_consumer.poll(timeout=timeout)
-        if msg is None:
-            pass
-        elif msg.error():
-            print(f'+++++ Error: {msg.error()}')
-        else:
-            kafka_val = msg.value().decode("utf-8")
-            try:
-                kafka_val = float(kafka_val)
+        try:
+            msg = kafka_consumer.poll(timeout=timeout)
+            if msg is None:
+                pass
+            elif msg.error():
+                print(f'+++++ Error: {msg.error()}')
+            else:
+                # data collections
+                kafka_val = float(msg.value().decode("utf-8"))
+                redis_val = redis_client.get(config_['redis']['key'])
+
+                # some calculation
                 if random.randint(-1, 1) > 0:
-                    inter_val = kafka_val * int(redis_client.get('test_key_int'))
+                    calc_ = round(kafka_val * int(redis_val), 2)
+                    calc_type = 'mult'
                 else:
-                    inter_val = kafka_val / int(redis_client.get('test_key_int'))
-                calc_ = round(calc_ + inter_val, 2)
+                    calc_ = round(kafka_val / int(redis_val), 2)
+                    calc_type = 'div'
 
-                # print(calc_)
-
-                # TODO add timestamp to data
-                curr_list = [[kafka_val, inter_val, calc_]]
-                curr_df = pd.DataFrame(curr_list, columns=['kafka_val', 'inter_val', 'calculation'])
+                # dataset creation and load
+                curr_list = [[kafka_val, redis_val, calc_type, calc_, datetime.now()]]
+                curr_df = pd.DataFrame(curr_list, columns=['kafka_val', 'redis_val', 'calc_type', 'calculation', 'ts'])
                 df_data = pd.concat([df_data, curr_df])
                 if df_data.shape[0] >= config_['general']['load_batch_size']:
                     if not table_creation_confirmed:
@@ -52,14 +55,8 @@ def main():
                     )
                     print(f'+++ Inserted {rows_inserted} rows')
                     df_data = pd.DataFrame()
-            except ValueError:
-                pass
-            except Exception:
-                print(f'+++++ Error: {traceback.format_exc()}')
-
-        timeout = round(timeout * config_["kafka"]["poll_timeout_growth"], 2)
-
-    # print('out of while')
+        except Exception:
+            print(f'+++++ Error: {traceback.format_exc()}')
 
 
 def get_kafka_consumer(config_):
@@ -75,9 +72,9 @@ def get_kafka_consumer(config_):
 
 
 def get_redis_client(config_):
-    client = redis.Redis(host=config_['redis_server']['server'],
-                         port=config_['redis_server']['port'],
-                         db=config_['redis_server']['db_name'],
+    client = redis.Redis(host=config_['redis']['server'],
+                         port=config_['redis']['port'],
+                         db=config_['redis']['db_name'],
                          decode_responses=True)
 
     return client
@@ -106,14 +103,15 @@ def confirm_or_create_table(config_, ch_engine, ch_client):
     if config_["clickhouse"]["table"] in results.name.values:
         return True
     else:
-        # TODO clean this up to add timestamp and use as key
         create_table_query = f'''
             create table {config_["clickhouse"]["schema"]}.{config_["clickhouse"]["table"]} (
-            kafka_val float,
-            inter_val float,
-            calculation float
+            kafka_val Float32,
+            redis_val Float32,
+            calc_type String,
+            calculation Float32,
+            ts DateTime
             )
-            order by kafka_val
+            order by ts
         '''
         ch_client.execute(create_table_query)
         return True
