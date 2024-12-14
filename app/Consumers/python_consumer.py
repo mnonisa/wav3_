@@ -42,8 +42,9 @@ def main():
                     calc_type = 'div'
 
                 # dataset creation and load
-                curr_list = [[kafka_val, redis_val, calc_type, calc_, datetime.now()]]
-                curr_df = pd.DataFrame(curr_list, columns=['kafka_val', 'redis_val', 'calc_type', 'calculation', 'ts'])
+                curr_list = [[kafka_val, redis_val, calc_type, calc_, 'python_consumer', datetime.now()]]
+                curr_df = pd.DataFrame(curr_list, columns=['kafka_val', 'redis_val', 'calc_type', 'calculation',
+                                                           'consumer_name', 'ts'])
                 df_data = pd.concat([df_data, curr_df])
                 if df_data.shape[0] >= config_['general']['load_batch_size']:
                     if not table_creation_confirmed:
@@ -109,6 +110,7 @@ def confirm_or_create_table(config_, ch_engine, ch_client):
             redis_val Float32,
             calc_type String,
             calculation Float32,
+            consumer_name String,
             ts DateTime
             )
             order by ts

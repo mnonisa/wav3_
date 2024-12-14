@@ -2,6 +2,18 @@
   hosts: clickhouse
   become: True
   tasks:
+    - name: Include app variables
+      include_vars: vars.yml
+
+    - name: Rename Machine
+      ansible.builtin.lineinfile:
+        path: /etc/hostname
+        regexp: '^{{ server_default_name }}'
+        line: 'wav3-clickhouse-single'
+
+    - name: Reboot machine to populate name change
+      ansible.builtin.reboot:
+
     - name: Add CH apt Key
       apt_key:
         url: https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key

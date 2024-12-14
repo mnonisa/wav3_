@@ -1,5 +1,5 @@
 ---
 - import_playbook: docker_dl_and_start.yml
 - import_playbook: kafka.yml
-- import_playbook: redis.yml 
+- import_playbook: redis.yml
 - import_playbook: clickhouse.yml

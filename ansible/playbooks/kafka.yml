@@ -5,6 +5,15 @@
     - name: Include app variables
       include_vars: vars.yml
 
+    - name: Rename Machine
+      ansible.builtin.lineinfile:
+        path: /etc/hostname
+        regexp: '^{{ server_default_name }}'
+        line: 'wav3-kafka'
+
+    - name: Reboot machine to populate name change
+      ansible.builtin.reboot:
+
     - name: Pull Docker image
       community.docker.docker_image:
         name: apache/kafka:3.9.0
